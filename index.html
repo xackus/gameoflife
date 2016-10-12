@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<script src="jquery-3.1.1.js"></script>
+<script src="game.js"></script>
+<link rel="Stylesheet" href="style.css" />
+<title>Game of Life</title>
+</head>
+<body>
+	<div id="cwrap">
+		<!--<input type="number" id="sizex" value="20" /> x <input type="number"
+			id="sizey" value="20" /> <br />-->
+		<textarea id="neigh">[-1, -1],
+[-1, 0],
+[-1, 1],
+[0, -1],
+[0, 1],
+[1, -1],
+[1, 0],
+[1, 1]</textarea>
+		<br />
+		Death: <input type="text" id="death" value="neigh < 2 || neigh > 3" />
+		<br />
+		Birth: <input type="text" id="birth" value="neigh == 3" />
+		<br />
+		<input type="button" id="submit" value="Update" />
+		<br />
+		<input type="button" id="tick" value="Next" />
+		<input type="number" id="interval" value="600" /> ms
+		<input type="button" id="play" value="Play" />
+	</div>
+	<div id="twrap">
+		<table id="t"></table>
+	</div>
+</body>
+</html>

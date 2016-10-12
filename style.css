@@ -1,0 +1,23 @@
+@CHARSET "UTF-8";
+
+#t {
+	border: 1px solid black;
+	border-spacing: 0;
+}
+
+#t tr td {
+	width: 10px;
+	height: 10px;
+	margin: 0;
+	padding: 0;
+	border-right: 1px solid #d3d3d3;
+	border-bottom: 1px solid #d3d3d3;
+}
+
+#t tr td.alive {
+	background-color: black;
+}
+
+#neigh {
+	height: 150px;
+}
