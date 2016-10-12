@@ -11,6 +11,8 @@ var death = 'neigh < 2 || neigh > 3';
 var survival = 'neigh == 2';
 var birth = 'neigh == 3';
 
+var table;
+
 function cell(x, y) {
 	return $('#t #tr' + y + " #td" + x);
 }
@@ -28,16 +30,30 @@ function gen_t(x, y) {
 	$('#t tr td').click(function() {
 		$(this).toggleClass('alive');
 	});
+	table = [];
+	for (var x = 0; x < w; ++x) {
+		table.push([]);
+		for (var y = 0; y < h; ++y) {
+			table[x].push(cell(x, y));
+		}
+	}
+}
+
+function notin(x, a, b){
+	return x < a || x >= b;
 }
 
 function tick() {
 	for (var y = 0; y < h; ++y) {
 		for (var x = 0; x < w; ++x) {
 			var neigh = 0;
-			var curr = cell(x, y);
+			var curr = table[x][y];
 			var alive = curr.hasClass('alive');
 			offset.forEach(function(elem) {
-				if (cell(x + elem[0], y + elem[1]).hasClass('alive')) {
+				if(notin(x + elem[0], 0, w) || notin(y + elem[1], 0, h)){
+					return;
+				}
+				if (table[x + elem[0]][y + elem[1]].hasClass('alive')) {
 					++neigh;
 				}
 			});
@@ -52,7 +68,7 @@ function tick() {
 	}
 	for (var y = 0; y < h; ++y) {
 		for (var x = 0; x < w; ++x) {
-			var curr = cell(x, y);
+			var curr = table[x][y];
 			if (curr.hasClass('alive') != curr.data('next')) {
 				curr.toggleClass('alive');
 			}
