@@ -11,7 +11,13 @@
 	<div id="cwrap">
 		<!--<input type="number" id="sizex" value="20" /> x <input type="number"
 			id="sizey" value="20" /> <br />-->
-		<textarea id="neigh">[-1, -1],
+		<form id="import_export" action="">
+			<input type="button" id="import" value="Import" />
+			<input type="button" id="export" value="Export" /> <br />
+			<textarea id="asjson"></textarea>
+		</form>
+		<form id="settings" action="">
+			<textarea id="neigh">[-1, -1],
 [-1, 0],
 [-1, 1],
 [0, -1],
@@ -19,16 +25,16 @@
 [1, -1],
 [1, 0],
 [1, 1]</textarea>
-		<br />
-		Death: <input type="text" id="death" value="neigh < 2 || neigh > 3" />
-		<br />
-		Birth: <input type="text" id="birth" value="neigh == 3" />
-		<br />
-		<input type="button" id="submit" value="Update" />
-		<br />
-		<input type="button" id="tick" value="Next" />
-		<input type="number" id="interval" value="600" /> ms
-		<input type="button" id="play" value="Play" />
+			<br />
+			Death: <input type="text" id="death" value="neigh < 2 || neigh > 3" /><br />
+			Birth: <input type="text" id="birth" value="neigh == 3" /><br />
+			<input type="button" id="submit" value="Update" /><br />
+		</form>
+		<form id="control" action="">
+			<input type="button" id="tick" value="Next" />
+			<input type="number" id="interval" value="600" /> ms
+			<input type="button" id="play" value="Play" />
+		</form>
 	</div>
 	<div id="twrap">
 		<table id="t"></table>

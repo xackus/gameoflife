@@ -2,27 +2,31 @@
  * 
  */
 
-var w = 30, h = 30;
-var offset = [ [ -1, -1 ], [ -1, 0, ], [ -1, 1 ], [ 0, -1 ], [ 0, 1 ],
-		[ 1, -1 ], [ 1, 0 ], [ 1, 1 ] ];
+var state = {
+	width : 50,
+	height : 150,
+	neighbors : [ [ -1, -1 ], [ -1, 0, ], [ -1, 1 ], [ 0, -1 ], [ 0, 1 ],
+			[ 1, -1 ], [ 1, 0 ], [ 1, 1 ] ],
+	death : 'neigh < 2 || neigh > 3',
+	birth : 'neigh == 3',
+	table : []
+};
+
 var running = false;
 var interval = 600;
-var death = 'neigh < 2 || neigh > 3';
-var survival = 'neigh == 2';
-var birth = 'neigh == 3';
 
-var table;
+var table_cache;
 
 function cell(x, y) {
 	return $('#t #tr' + y + " #td" + x);
 }
 
-function gen_t(x, y) {
+function gen_t(w, h) {
 	var tab = '';
-	for (var cy = 0; cy < y; ++cy) {
-		tab += '<tr id="tr' + cy + '">';
-		for (var cx = 0; cx < x; ++cx) {
-			tab += '<td id="td' + cx + '"></td>'
+	for (var y = 0; y < h; ++y) {
+		tab += '<tr id="tr' + y + '">';
+		for (var x = 0; x < w; ++x) {
+			tab += '<td id="td' + x + '"></td>'
 		}
 		tab += '</tr>';
 	}
@@ -30,45 +34,46 @@ function gen_t(x, y) {
 	$('#t tr td').click(function() {
 		$(this).toggleClass('alive');
 	});
-	table = [];
+	table_cache = [];
 	for (var x = 0; x < w; ++x) {
-		table.push([]);
+		table_cache.push([]);
 		for (var y = 0; y < h; ++y) {
-			table[x].push(cell(x, y));
+			table_cache[x].push(cell(x, y));
 		}
 	}
 }
 
-function notin(x, a, b){
+function notin(x, a, b) {
 	return x < a || x >= b;
 }
 
 function tick() {
-	for (var y = 0; y < h; ++y) {
-		for (var x = 0; x < w; ++x) {
+	for (var y = 0; y < state.height; ++y) {
+		for (var x = 0; x < state.width; ++x) {
 			var neigh = 0;
-			var curr = table[x][y];
+			var curr = table_cache[x][y];
 			var alive = curr.hasClass('alive');
-			offset.forEach(function(elem) {
-				if(notin(x + elem[0], 0, w) || notin(y + elem[1], 0, h)){
+			state.neighbors.forEach(function(elem) {
+				if (notin(x + elem[0], 0, state.width)
+						|| notin(y + elem[1], 0, state.height)) {
 					return;
 				}
-				if (table[x + elem[0]][y + elem[1]].hasClass('alive')) {
+				if (table_cache[x + elem[0]][y + elem[1]].hasClass('alive')) {
 					++neigh;
 				}
 			});
-			if (alive && eval(death)) {
+			if (alive && eval(state.death)) {
 				curr.data('next', false);
-			} else if (!alive && eval(birth)) {
+			} else if (!alive && eval(state.birth)) {
 				curr.data('next', true);
 			} else {
 				curr.data('next', alive);
 			}
 		}
 	}
-	for (var y = 0; y < h; ++y) {
-		for (var x = 0; x < w; ++x) {
-			var curr = table[x][y];
+	for (var y = 0; y < state.height; ++y) {
+		for (var x = 0; x < state.width; ++x) {
+			var curr = table_cache[x][y];
 			if (curr.hasClass('alive') != curr.data('next')) {
 				curr.toggleClass('alive');
 			}
@@ -81,12 +86,37 @@ function loop() {
 		return;
 	}
 	var time = performance.now();
-	tick()
+	tick();
 	setTimeout(loop, Math.max(0, interval - (performance.now() - time)));
 }
 
+function export_() {
+	running = false;
+	table = [];
+	for (var x = 0; x < state.width; ++x) {
+		table.push([]);
+		for (var y = 0; y < state.height; ++y) {
+			table[x].push(table_cache[x][y].hasClass('alive'));
+		}
+	}
+	state.table = table;
+	return JSON.stringify(state);
+}
+
+function import_(data) {
+	state = JSON.parse(data);
+	gen_t(state.width, state.height);
+	for (var x = 0; x < state.width; ++x) {
+		for (var y = 0; y < state.height; ++y) {
+			if (state.table[x][y]) {
+				table_cache[x][y].addClass('alive');
+			}
+		}
+	}
+}
+
 $(function() {
-	gen_t(w, h);
+	gen_t(state.width, state.height);
 	$('#tick').click(function() {
 		tick();
 	});
@@ -102,8 +132,14 @@ $(function() {
 		}
 	});
 	$('#submit').click(function() {
-		offset = JSON.parse('[' + $("#neigh").val() + ']');
-		death = $('#death').val();
-		birth = $('#birth').val();
+		state.neighbors = JSON.parse('[' + $("#neigh").val() + ']');
+		state.death = $('#death').val();
+		state.birth = $('#birth').val();
+	});
+	$('#export').click(function() {
+		$('#asjson').val(export_());
+	});
+	$('#import').click(function() {
+		import_($('#asjson').val());
 	});
 });

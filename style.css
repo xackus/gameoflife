@@ -18,6 +18,21 @@
 	background-color: black;
 }
 
+#cwrap {
+	display: inline-block;
+}
+
+form {
+	padding: 5px;
+	border: 1px solid black;
+	margin-bottom: 10px;
+}
+
 #neigh {
 	height: 150px;
+}
+
+#asjson {
+	width: 300px;
+	height: 100px;
 }
