@@ -3,13 +3,14 @@
  */
 
 var state = {
-	width : 50,
-	height : 150,
+	width : 0,
+	height : 0,
 	neighbors : [ [ -1, -1 ], [ -1, 0, ], [ -1, 1 ], [ 0, -1 ], [ 0, 1 ],
 			[ 1, -1 ], [ 1, 0 ], [ 1, 1 ] ],
 	death : 'neigh < 2 || neigh > 3',
 	birth : 'neigh == 3',
 	table : []
+// table is built only for export and read from only on import
 };
 
 var running = false;
@@ -21,19 +22,7 @@ function cell(x, y) {
 	return $('#t #tr' + y + " #td" + x);
 }
 
-function gen_t(w, h) {
-	var tab = '';
-	for (var y = 0; y < h; ++y) {
-		tab += '<tr id="tr' + y + '">';
-		for (var x = 0; x < w; ++x) {
-			tab += '<td id="td' + x + '"></td>'
-		}
-		tab += '</tr>';
-	}
-	$('#t').html(tab);
-	$('#t tr td').click(function() {
-		$(this).toggleClass('alive');
-	});
+function build_cache(w, h) {
 	table_cache = [];
 	for (var x = 0; x < w; ++x) {
 		table_cache.push([]);
@@ -41,6 +30,45 @@ function gen_t(w, h) {
 			table_cache[x].push(cell(x, y));
 		}
 	}
+}
+
+function resize(w, h) {
+	if (h < state.height) {
+		for (var y = h; y < state.height; ++y) {
+			$('#t #tr' + y).remove();
+		}
+	} else {
+		for (var y = state.height; y < h; ++y) {
+			tr = $('<tr></tr>', {
+				id : 'tr' + y
+			});
+			for (var x = 0; x < Math.min(w, state.width); ++x) {
+				$('<td></td>', {
+					id : 'td' + x
+				}).click(function() {
+					$(this).toggleClass('alive');
+				}).appendTo(tr);
+			}
+			tr.appendTo('#t');
+		}
+
+	}
+	if (w < state.width) {
+		for (var x = w; x < state.width; ++x) {
+			$('#t tr #td' + x).remove();
+		}
+	} else {
+		for (var x = state.width; x < w; ++x) {
+			$('<td></td>', {
+				id : 'td' + x
+			}).click(function() {
+				$(this).toggleClass('alive');
+			}).appendTo('#t tr');
+		}
+	}
+	state.width = w;
+	state.height = h;
+	build_cache(w, h);
 }
 
 function notin(x, a, b) {
@@ -122,7 +150,8 @@ function export_() {
 function import_(data) {
 	pause();
 	state = JSON.parse(data);
-	gen_t(state.width, state.height);
+	resize(state.width, state.height);
+	$('#t tr td').removeClass('alive');
 	for (var x = 0; x < state.width; ++x) {
 		if (state.table[x].length == 0) {
 			continue;
@@ -133,10 +162,15 @@ function import_(data) {
 			}
 		}
 	}
+	neigh = JSON.stringify(state.neighbors);
+	neigh = neigh.substring(1, neigh.length - 1)
+	$('#neigh').val(neigh);
+	$('#birth').val(state.birth);
+	$('#death').val(state.death);
 }
 
 $(function() {
-	gen_t(state.width, state.height);
+	resize(50, 150);
 	$('#tick').click(function() {
 		tick();
 	});
@@ -154,6 +188,7 @@ $(function() {
 		state.neighbors = JSON.parse('[' + $("#neigh").val() + ']');
 		state.death = $('#death').val();
 		state.birth = $('#birth').val();
+		resize(Math.round($('#width').val()), Math.round($('#height').val()))
 	});
 	$('#export').click(function() {
 		$('#asjson').val(export_());
