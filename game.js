@@ -90,8 +90,13 @@ function loop() {
 	setTimeout(loop, Math.max(0, interval - (performance.now() - time)));
 }
 
-function export_() {
+function pause() {
 	running = false;
+	$(this).val("Play");
+}
+
+function export_() {
+	pause();
 	table = [];
 	for (var x = 0; x < state.width; ++x) {
 		curr = [];
@@ -115,6 +120,7 @@ function export_() {
 }
 
 function import_(data) {
+	pause();
 	state = JSON.parse(data);
 	gen_t(state.width, state.height);
 	for (var x = 0; x < state.width; ++x) {
@@ -136,8 +142,7 @@ $(function() {
 	});
 	$('#play').click(function() {
 		if (running) {
-			running = false;
-			$(this).val("Play");
+			pause();
 		} else {
 			running = true;
 			$(this).val("Pause");

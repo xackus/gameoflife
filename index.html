@@ -17,22 +17,22 @@
 			<textarea id="asjson"></textarea>
 		</form>
 		<form id="settings" action="">
-			<textarea id="neigh">[-1, -1],
+			<label>Neighbors:<br /><textarea id="neigh">[-1, -1],
 [-1, 0],
 [-1, 1],
 [0, -1],
 [0, 1],
 [1, -1],
 [1, 0],
-[1, 1]</textarea>
+[1, 1]</textarea></label>
 			<br />
-			Death: <input type="text" id="death" value="neigh < 2 || neigh > 3" /><br />
-			Birth: <input type="text" id="birth" value="neigh == 3" /><br />
+			<label>Death: <input type="text" id="death" value="neigh < 2 || neigh > 3" /></label><br />
+			<label>Birth: <input type="text" id="birth" value="neigh == 3" /></label><br />
 			<input type="button" id="submit" value="Update" /><br />
 		</form>
 		<form id="control" action="">
 			<input type="button" id="tick" value="Next" />
-			<input type="number" id="interval" value="600" /> ms
+			<label><input type="number" id="interval" value="600" /></label> ms
 			<input type="button" id="play" value="Play" />
 		</form>
 	</div>
