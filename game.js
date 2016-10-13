@@ -92,7 +92,7 @@ function loop() {
 
 function pause() {
 	running = false;
-	$(this).val("Play");
+	$('#play').val("Play");
 }
 
 function export_() {
