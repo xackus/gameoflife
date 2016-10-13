@@ -174,7 +174,7 @@ function import_(data) {
 }
 
 $(function() {
-	resize(50, 150);
+	resize(100, 100);
 	$('#tick').click(function() {
 		tick();
 	});
