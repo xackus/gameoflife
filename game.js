@@ -94,9 +94,20 @@ function export_() {
 	running = false;
 	table = [];
 	for (var x = 0; x < state.width; ++x) {
-		table.push([]);
+		curr = [];
+		none = true;
 		for (var y = 0; y < state.height; ++y) {
-			table[x].push(table_cache[x][y].hasClass('alive'));
+			if (table_cache[x][y].hasClass('alive')) {
+				curr.push(1);
+				none = false;
+			} else {
+				curr.push(0);
+			}
+		}
+		if (!none) {
+			table.push(curr);
+		} else {
+			table.push([]);
 		}
 	}
 	state.table = table;
@@ -107,8 +118,11 @@ function import_(data) {
 	state = JSON.parse(data);
 	gen_t(state.width, state.height);
 	for (var x = 0; x < state.width; ++x) {
+		if (state.table[x].length == 0) {
+			continue;
+		}
 		for (var y = 0; y < state.height; ++y) {
-			if (state.table[x][y]) {
+			if (state.table[x][y] == 1) {
 				table_cache[x][y].addClass('alive');
 			}
 		}
