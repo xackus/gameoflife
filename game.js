@@ -149,8 +149,10 @@ function export_() {
 
 function import_(data) {
 	pause();
-	state = JSON.parse(data);
-	resize(state.width, state.height);
+	new_state = JSON.parse(data);// resize uses old state.width and
+									// state.height
+	resize(new_state.width, new_state.height);
+	state = new_state;
 	$('#t tr td').removeClass('alive');
 	for (var x = 0; x < state.width; ++x) {
 		if (state.table[x].length == 0) {
@@ -167,6 +169,8 @@ function import_(data) {
 	$('#neigh').val(neigh);
 	$('#birth').val(state.birth);
 	$('#death').val(state.death);
+	$('#width').val(state.width);
+	$('#height').val(state.height);
 }
 
 $(function() {
