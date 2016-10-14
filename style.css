@@ -14,7 +14,7 @@
 	border-bottom: 1px solid #d3d3d3;
 }
 
-#t tr td.alive {
+.alive {
 	background-color: black;
 }
 
@@ -44,4 +44,8 @@ form {
 #counter {
 	margin-left: 10px;
 	margin-right: 10px;
+}
+
+input:invalid {
+	border: 1px solid red;
 }

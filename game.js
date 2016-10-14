@@ -17,16 +17,12 @@ var interval = 300;
 
 var table_cache;
 
-function cell(x, y) {
-	return $('#t #tr' + y + " #td" + x);
-}
-
 function build_cache(w, h) {
 	table_cache = [];
 	for (var x = 0; x < w; ++x) {
 		table_cache.push([]);
 		for (var y = 0; y < h; ++y) {
-			table_cache[x].push(cell(x, y));
+			table_cache[x].push($('#tr' + y + " .td" + x));
 		}
 	}
 }
@@ -34,7 +30,7 @@ function build_cache(w, h) {
 function resize(w, h) {
 	if (h < state.height) {
 		for (var y = h; y < state.height; ++y) {
-			$('#t #tr' + y).remove();
+			$('#tr' + y).remove();
 		}
 	} else {
 		for (var y = state.height; y < h; ++y) {
@@ -43,7 +39,7 @@ function resize(w, h) {
 			});
 			for (var x = 0; x < Math.min(w, state.width); ++x) {
 				$('<td></td>', {
-					id : 'td' + x
+					"class" : 'td' + x
 				}).click(function() {
 					$(this).toggleClass('alive');
 				}).appendTo(tr);
@@ -54,12 +50,12 @@ function resize(w, h) {
 	}
 	if (w < state.width) {
 		for (var x = w; x < state.width; ++x) {
-			$('#t tr #td' + x).remove();
+			$('.td' + x).remove();
 		}
 	} else {
 		for (var x = state.width; x < w; ++x) {
 			$('<td></td>', {
-				id : 'td' + x
+				"class" : 'td' + x
 			}).click(function() {
 				$(this).toggleClass('alive');
 			}).appendTo('#t tr');
