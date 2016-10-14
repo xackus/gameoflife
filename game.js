@@ -5,8 +5,7 @@
 var state = {
 	width : 0,
 	height : 0,
-	neighbors : [ [ -1, -1 ], [ -1, 0, ], [ -1, 1 ], [ 0, -1 ], [ 0, 1 ],
-			[ 1, -1 ], [ 1, 0 ], [ 1, 1 ] ],
+	neighbors : [ [ -1, -1 ], [ -1, 0, ], [ -1, 1 ], [ 0, -1 ], [ 0, 1 ], [ 1, -1 ], [ 1, 0 ], [ 1, 1 ] ],
 	death : 'neigh < 2 || neigh > 3',
 	birth : 'neigh == 3',
 	table : []
@@ -78,8 +77,10 @@ function tick() {
 			var curr = table_cache[x][y];
 			var alive = curr.hasClass('alive');
 			state.neighbors.forEach(function(elem) {
-				let cx = x + elem[0];
-				let cy = y + elem[1];
+				let
+				cx = x + elem[0];
+				let
+				cy = y + elem[1];
 				if (cx < 0 || cx >= state.width || cy < 0 || cy >= state.height) {
 					return;
 				}
@@ -104,6 +105,7 @@ function tick() {
 			}
 		}
 	}
+	$('#counter').html(parseInt($('#counter').html(), 10) + 1);
 }
 
 function loop() {
@@ -147,7 +149,7 @@ function export_() {
 function import_(data) {
 	pause();
 	new_state = JSON.parse(data);// resize uses old state.width and
-									// state.height
+	// state.height
 	resize(new_state.width, new_state.height);
 	state = new_state;
 	$('#t tr td').removeClass('alive');
@@ -196,5 +198,8 @@ $(function() {
 	});
 	$('#import').click(function() {
 		import_($('#asjson').val());
+	});
+	$('#reset_counter').click(function() {
+		$('#counter').html('0');
 	});
 });

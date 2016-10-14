@@ -33,6 +33,15 @@ form {
 }
 
 #asjson {
-	width: 300px;
+	width: 330px;
 	height: 100px;
+}
+
+#interval {
+	width: 50px;
+}
+
+#counter {
+	margin-left: 10px;
+	margin-right: 10px;
 }
