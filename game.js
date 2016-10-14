@@ -14,7 +14,7 @@ var state = {
 };
 
 var running = false;
-var interval = 600;
+var interval = 300;
 
 var table_cache;
 
@@ -71,10 +71,6 @@ function resize(w, h) {
 	build_cache(w, h);
 }
 
-function notin(x, a, b) {
-	return x < a || x >= b;
-}
-
 function tick() {
 	for (var y = 0; y < state.height; ++y) {
 		for (var x = 0; x < state.width; ++x) {
@@ -82,11 +78,12 @@ function tick() {
 			var curr = table_cache[x][y];
 			var alive = curr.hasClass('alive');
 			state.neighbors.forEach(function(elem) {
-				if (notin(x + elem[0], 0, state.width)
-						|| notin(y + elem[1], 0, state.height)) {
+				let cx = x + elem[0];
+				let cy = y + elem[1];
+				if (cx < 0 || cx >= state.width || cy < 0 || cy >= state.height) {
 					return;
 				}
-				if (table_cache[x + elem[0]][y + elem[1]].hasClass('alive')) {
+				if (table_cache[cx][cy].hasClass('alive')) {
 					++neigh;
 				}
 			});
