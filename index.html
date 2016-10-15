@@ -2,21 +2,21 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<script src="jquery-3.1.1.js"></script>
+<script src="jquery-3.1.1.slim.min.js"></script>
 <script src="game.js"></script>
 <link rel="Stylesheet" href="style.css" />
 <title>Game of Life</title>
 </head>
 <body>
 	<div id="cwrap">
-		<form id="import_export" action="">
-			<input type="button" id="import" value="Import" />
-			<input type="button" id="export" value="Export" /> <br />
+		<form id="import_export" action="#">
+			<button type="submit" id="import">Import</button>
+			<button type="button" id="export">Export</button><br />
 			<textarea id="asjson"></textarea>
 		</form>
-		<form id="settings" action="">
-			<label>Width: <input type="number" id="width" value="100"/></label><br />
-			<label>Height: <input type="number" id="height" value="100" /></label><br />
+		<form id="settings" action="#">
+			<label>Width: <input type="number" id="width" value="100" min="0" /></label><br />
+			<label>Height: <input type="number" id="height" value="100" min="0" /></label><br />
 			<label>Neighbors:<br /><textarea id="neigh">[-1, -1],
 [-1, 0],
 [-1, 1],
@@ -28,14 +28,14 @@
 			<br />
 			<label>Death: <input type="text" id="death" value="neigh < 2 || neigh > 3" /></label><br />
 			<label>Birth: <input type="text" id="birth" value="neigh == 3" /></label><br />
-			<input type="button" id="submit" value="Update" /><br />
+			<button type="submit" id="submit">Update</button><br />
 		</form>
-		<form id="control" action="">
-			<input type="button" id="tick" value="Next" />
-			<label><input type="number" id="interval" value="300" min="0" /></label> ms
-			<input type="button" id="play" value="Play" />
+		<form id="control" action="#">
+			<button type="button" id="tick">Next</button>
+			<label><input type="number" id="interval" value="300" min="0" /> ms</label>
+			<button type="submit" id="play">Play</button>
 			<span id="counter">0</span>
-			<input type="button" id="reset_counter" value="Reset counter" />
+			<button type="button" id="reset_counter">Reset counter</button>
 		</form>
 	</div>
 	<div id="twrap">

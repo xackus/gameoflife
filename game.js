@@ -1,8 +1,8 @@
 /**
- * 
+ * author: Maciej Walczak
  */
 
-var state = {
+let state = {
 	width : 0,
 	height : 0,
 	neighbors : [ [ -1, -1 ], [ -1, 0, ], [ -1, 1 ], [ 0, -1 ], [ 0, 1 ], [ 1, -1 ], [ 1, 0 ], [ 1, 1 ] ],
@@ -12,17 +12,17 @@ var state = {
 // table is built only for export and read from only on import
 };
 
-var running = false;
-var interval = 300;
+let running = false;
+let interval = 300;
 
-var table_cache;
+let table_cache;
 
 function build_cache(w, h) {
 	table_cache = [];
 	for (var x = 0; x < w; ++x) {
 		table_cache.push([]);
 		for (var y = 0; y < h; ++y) {
-			table_cache[x].push($('#tr' + y + " .td" + x));
+			table_cache[x].push($('#tr' + y + ' .td' + x));
 		}
 	}
 }
@@ -39,7 +39,7 @@ function resize(w, h) {
 			});
 			for (var x = 0; x < Math.min(w, state.width); ++x) {
 				$('<td></td>', {
-					"class" : 'td' + x
+					'class' : 'td' + x
 				}).click(function() {
 					$(this).toggleClass('alive');
 				}).appendTo(tr);
@@ -55,7 +55,7 @@ function resize(w, h) {
 	} else {
 		for (var x = state.width; x < w; ++x) {
 			$('<td></td>', {
-				"class" : 'td' + x
+				'class' : 'td' + x
 			}).click(function() {
 				$(this).toggleClass('alive');
 			}).appendTo('#t tr');
@@ -73,10 +73,8 @@ function tick() {
 			var curr = table_cache[x][y];
 			var alive = curr.hasClass('alive');
 			state.neighbors.forEach(function(elem) {
-				let
-				cx = x + elem[0];
-				let
-				cy = y + elem[1];
+				let cx = x + elem[0];
+				let cy = y + elem[1];
 				if (cx < 0 || cx >= state.width || cy < 0 || cy >= state.height) {
 					return;
 				}
@@ -108,34 +106,54 @@ function loop() {
 	if (!running) {
 		return;
 	}
-	var time = performance.now();
+	let time = performance.now();
 	tick();
 	setTimeout(loop, Math.max(0, interval - (performance.now() - time)));
 }
 
 function pause() {
 	running = false;
-	$('#play').val("Play");
+	$('#play').html('Play');
 }
 
 function export_() {
 	pause();
-	table = [];
+	let table = [];
+	let empty = 0;
 	for (var x = 0; x < state.width; ++x) {
-		curr = [];
-		none = true;
+		table.push([]);
+		var last = 0;
 		for (var y = 0; y < state.height; ++y) {
-			if (table_cache[x][y].hasClass('alive')) {
-				curr.push(1);
-				none = false;
-			} else {
-				curr.push(0);
+			while (y < state.height && !table_cache[x][y].hasClass('alive')) {
+				++y;
 			}
+			if (y - last !== 0 && y !== state.height) {
+				if (empty !== 0) {
+					table.pop()
+					table.push(empty);
+					table.push([]);
+					empty = 0;
+				}
+				table[table.length - 1].push((y - last) * 2);
+			}
+			last = y;
+			while (y < state.height && table_cache[x][y].hasClass('alive')) {
+				++y;
+			}
+			if (y - last !== 0) {
+				if (empty !== 0) {
+					table.pop()
+					table.push(empty);
+					table.push([]);
+					empty = 0;
+				}
+				table[table.length - 1].push((y - last) * 2 + 1);
+			}
+			last = y;
 		}
-		if (!none) {
-			table.push(curr);
-		} else {
-			table.push([]);
+		if (table[table.length - 1].length === 0) {
+			++empty;
+			table.pop();
 		}
 	}
 	state.table = table;
@@ -148,16 +166,30 @@ function import_(data) {
 	// state.height
 	resize(new_state.width, new_state.height);
 	state = new_state;
-	$('#t tr td').removeClass('alive');
-	for (var x = 0; x < state.width; ++x) {
-		if (state.table[x].length == 0) {
+	$('.alive').removeClass('alive');
+	var x = 0;
+	for (var i = 0; i < state.table.length; ++i) {
+		if (typeof state.table[i] === 'number') {
+			x += state.table[i];
 			continue;
 		}
-		for (var y = 0; y < state.height; ++y) {
-			if (state.table[x][y] == 1) {
+		var y = 0;
+		for (var j = 0; j < state.table[i].length; ++j) {
+			if (state.table[i][j] === 1) {// legacy
 				table_cache[x][y].addClass('alive');
+				++y;
+			} else if (state.table[i][j] % 2 === 1) {
+				var end = y + Math.trunc(state.table[i][j] / 2);
+				for (; y < end; ++y) {
+					table_cache[x][y].addClass('alive');
+				}
+			} else if (state.table[i][j] === 0) {// legacy
+				++y;
+			} else if (state.table[i][j] % 2 === 0) {
+				y += state.table[i][j] / 2;
 			}
 		}
+		++x;
 	}
 	neigh = JSON.stringify(state.neighbors);
 	neigh = neigh.substring(1, neigh.length - 1)
@@ -178,22 +210,25 @@ $(function() {
 			pause();
 		} else {
 			running = true;
-			$(this).val("Pause");
+			$(this).html("Pause");
 			interval = Math.round($('#interval').val());
 			loop();
 		}
+		return false;
 	});
 	$('#submit').click(function() {
-		state.neighbors = JSON.parse('[' + $("#neigh").val() + ']');
+		state.neighbors = JSON.parse('[' + $('#neigh').val() + ']');
 		state.death = $('#death').val();
 		state.birth = $('#birth').val();
 		resize(Math.round($('#width').val()), Math.round($('#height').val()))
+		return false;
 	});
 	$('#export').click(function() {
 		$('#asjson').val(export_());
 	});
 	$('#import').click(function() {
 		import_($('#asjson').val());
+		return false;
 	});
 	$('#reset_counter').click(function() {
 		$('#counter').html('0');
