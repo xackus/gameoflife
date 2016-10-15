@@ -19,11 +19,14 @@ let table_cache;
 
 function build_cache(w, h) {
 	table_cache = [];
-	for (var x = 0; x < w; ++x) {
+	for(var x = 0; x < w; ++x){
 		table_cache.push([]);
-		for (var y = 0; y < h; ++y) {
-			table_cache[x].push($('#tr' + y + ' .td' + x));
-		}
+	}
+	for (var y = 0; y < h; ++y) {
+		table_cache.push([]);
+		$('#tr' + y).children().each(function(x) {
+			table_cache[x].push($(this));
+		});
 	}
 }
 
