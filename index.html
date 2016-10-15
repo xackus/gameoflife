@@ -9,15 +9,18 @@
 </head>
 <body>
 	<div id="cwrap">
-		<form id="import_export" action="#">
-			<button type="submit" id="import">Import</button>
-			<button type="button" id="export">Export</button><br />
-			<textarea id="asjson"></textarea>
-		</form>
-		<form id="settings" action="#">
-			<label>Width: <input type="number" id="width" value="100" min="0" /></label><br />
-			<label>Height: <input type="number" id="height" value="100" min="0" /></label><br />
-			<label>Neighbors:<br /><textarea id="neigh">[-1, -1],
+		<div class="cgroup">
+			<form id="import_export" action="#">
+				<button type="submit" id="import">Import</button>
+				<button type="button" id="export">Export</button><br />
+				<textarea id="asjson"></textarea>
+			</form>
+		</div>
+		<div class="cgroup">
+			<form id="settings" action="#">
+				<label>Width: <input type="number" id="width" value="100" min="0" /></label><br />
+				<label>Height: <input type="number" id="height" value="100" min="0" /></label><br />
+				<label>Neighbors:<br /><textarea id="neigh">[-1, -1],
 [-1, 0],
 [-1, 1],
 [0, -1],
@@ -25,17 +28,29 @@
 [1, -1],
 [1, 0],
 [1, 1]</textarea></label><br />
-			<label>Death: <input type="text" id="death" value="neigh < 2 || neigh > 3" /></label><br />
-			<label>Birth: <input type="text" id="birth" value="neigh == 3" /></label><br />
-			<button type="submit" id="submit">Update</button><br />
-		</form>
-		<form id="control" action="#">
-			<button type="button" id="tick">Next</button>
-			<label><input type="number" id="interval" value="300" min="0" /> ms</label>
-			<button type="submit" id="play">Play</button>
-			<span id="counter">0</span>
-			<button type="button" id="reset_counter">Reset counter</button>
-		</form>
+				<label>Death: <input type="text" id="death" value="neigh < 2 || neigh > 3" /></label><br />
+				<label>Birth: <input type="text" id="birth" value="neigh == 3" /></label><br />
+				<button type="submit" id="submit">Update</button><br />
+			</form>
+		</div>
+		<div class="cgroup">
+			<form id="control" action="#">
+				<input type="number" id="step" value="1" min="1" />
+				<span class="vertical">
+					<button type="submit" id="tick">Forward</button>
+					<button type="button" id="prev">Revert</button>
+				</span>
+			</form>
+			<form id="control2" action="#">
+				<label><input type="number" id="interval" value="300" min="0" /> ms</label>
+				<span class="vertical">
+					<button type="submit" id="play">Play</button>
+					<button type="button" id="rev">Reverse</button>
+				</span>
+				<span id="counter">0</span>
+				<button type="button" id="reset_counter">Reset counter</button>
+			</form>
+		</div>
 	</div>
 	<div id="twrap">
 		<table id="t"></table>

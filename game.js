@@ -17,9 +17,11 @@ let interval = 300;
 
 let table_cache;
 
+let history = [];
+
 function build_cache(w, h) {
 	table_cache = [];
-	for(var x = 0; x < w; ++x){
+	for (var x = 0; x < w; ++x) {
 		table_cache.push([]);
 	}
 	for (var y = 0; y < h; ++y) {
@@ -61,7 +63,7 @@ function resize(w, h) {
 				'class' : 'td' + x
 			}).click(function() {
 				$(this).toggleClass('alive');
-			}).appendTo('#t tr');
+			}).appendTo('#t > tr');
 		}
 	}
 	state.width = w;
@@ -70,11 +72,15 @@ function resize(w, h) {
 }
 
 function tick() {
-	for (var y = 0; y < state.height; ++y) {
-		for (var x = 0; x < state.width; ++x) {
+	history.push([]);
+	let h = history.length - 1;
+	for (var x = 0; x < state.width; ++x) {
+		history[h].push([]);
+		for (var y = 0; y < state.height; ++y) {
 			var neigh = 0;
 			var curr = table_cache[x][y];
 			var alive = curr.hasClass('alive');
+			history[h][x][y] = alive;
 			state.neighbors.forEach(function(elem) {
 				let cx = x + elem[0];
 				let cy = y + elem[1];
@@ -102,21 +108,56 @@ function tick() {
 			}
 		}
 	}
-	$('#counter').html(parseInt($('#counter').html(), 10) + 1);
+}
+
+function revert(index) {
+	if(history.length === 0){
+		return;
+	}
+	$('.alive').removeClass('alive');
+	for (var x = 0; x < state.width; ++x) {
+		for (var y = 0; y < state.height; ++y) {
+			if (history[index][x][y]) {
+				table_cache[x][y].addClass('alive');
+			}
+		}
+	}
+	history.splice(index, history.length - index);
 }
 
 function loop() {
+	let time = performance.now();
+	
 	if (!running) {
 		return;
 	}
-	let time = performance.now();
+	
 	tick();
+	$('#counter').html(parseInt($('#counter').html(), 10) + 1);
+	
 	setTimeout(loop, Math.max(0, interval - (performance.now() - time)));
+}
+
+function reverse_loop() {
+	let time = performance.now();
+	
+	if(history.length === 0){
+		running = false;
+	}
+	if (!running) {
+		return;
+	}
+	
+	revert(history.length - 1);
+	$('#counter').html(parseInt($('#counter').html(), 10) - 1);
+	
+	setTimeout(reverse_loop, Math.max(0, interval - (performance.now() - time)));
 }
 
 function pause() {
 	running = false;
 	$('#play').html('Play');
+	$('#rev').html('Reverse');
 }
 
 function export_() {
@@ -170,7 +211,8 @@ function import_(data) {
 	resize(new_state.width, new_state.height);
 	state = new_state;
 	$('.alive').removeClass('alive');
-	var x = 0;
+	history = [];
+	let x = 0;
 	for (var i = 0; i < state.table.length; ++i) {
 		if (typeof state.table[i] === 'number') {
 			x += state.table[i];
@@ -205,17 +247,43 @@ function import_(data) {
 
 $(function() {
 	resize(100, 100);
+	
 	$('#tick').click(function() {
-		tick();
+		pause();
+		let step = Math.round($('#step').val());
+		for(var i = 0; i < step; ++i){
+			tick();
+		}
+		$('#counter').html(parseInt($('#counter').html(), 10) + step);
+		return false;
+	});
+	$('#prev').click(function() {
+		pause();
+		let step = Math.min(Math.round($('#step').val()), history.length);
+		revert(history.length - step);
+		$('#counter').html(parseInt($('#counter').html(), 10) - step);
 	});
 	$('#play').click(function() {
 		if (running) {
 			pause();
 		} else {
 			running = true;
-			$(this).html("Pause");
+			$(this).html('Pause');
+			$('#rev').html('Pause');
 			interval = Math.round($('#interval').val());
 			loop();
+		}
+		return false;
+	});
+	$('#rev').click(function() {
+		if (running) {
+			pause();
+		} else {
+			running = true;
+			$(this).html('Pause');
+			$('#play').html('Pause');
+			interval = Math.round($('#interval').val());
+			reverse_loop();
 		}
 		return false;
 	});

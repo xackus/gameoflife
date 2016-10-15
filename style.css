@@ -5,7 +5,7 @@
 	border-spacing: 0;
 }
 
-#t tr td {
+#t > tr > td {
 	width: 10px;
 	height: 10px;
 	margin: 0;
@@ -22,10 +22,14 @@
 	display: inline-block;
 }
 
-form {
+.cgroup {
 	padding: 5px;
 	border: 1px solid black;
 	margin-bottom: 10px;
+}
+
+#control, #control2 {
+	display: inline-block;
 }
 
 #neigh {
@@ -33,19 +37,28 @@ form {
 }
 
 #asjson {
-	width: 330px;
+	width: 420px;
 	height: 100px;
 }
 
-#interval {
+#interval, #step {
 	width: 50px;
 }
 
 #counter {
-	margin-left: 10px;
-	margin-right: 10px;
+	margin-right: 4px;
 }
 
 input:invalid {
 	border: 1px solid red;
+}
+
+.vertical {
+	display: inline-block;
+	margin-right: 10px;
+	vertical-align: middle;
+}
+.vertical > * {
+	display: block;
+	width: 100%;
 }
